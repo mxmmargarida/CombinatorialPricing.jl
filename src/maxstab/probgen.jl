@@ -6,7 +6,7 @@
 end
 
 # Interface
-generate(::Type{MaxStableSetPricing}, num_vertices; kwargs...) =
+generate(::Type{MaxStableSetPricing}, num_vertices::Int; kwargs...) =
     generate_maxstab_pricing_random(num_vertices, MaxStableSetPricingGenArgs(; kwargs...))
 
 # Implementations
