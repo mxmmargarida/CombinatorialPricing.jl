@@ -1,5 +1,3 @@
-follower_sense(::MaxStableSetPricing) = MAX_SENSE
-
 toll_bounds(prob::MaxStableSetPricing) = prob.base_values
 
 function add_primal!(model::Model, prob::MaxStableSetPricing)

@@ -28,13 +28,13 @@ Get the set of toll-free items.
 function toll_free end
 
 """
-    base_values(prob::PricingProblem)::Vector{Int}
+    base_costs(prob::PricingProblem)::Vector{Float64}
 
-Get the base values of all selectable items.
-These are the actual values of the toll-free items.
-The actual value of a tolled item is the sum of its base value and its toll price.
+Get the base costs of all selectable items.
+They are the actual costs of the toll-free items.
+The actual cost of a tolled item is the sum of its base cost and its toll price.
 """
-function base_values end
+function base_costs end
 
 """
     generate(type::Type{<:PricingProblem}, num_items::Int; kwargs...)

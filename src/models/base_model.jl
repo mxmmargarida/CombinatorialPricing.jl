@@ -4,9 +4,8 @@ function base_model(prob::PricingProblem; silent=false, threads=nothing)
 
     n = num_items(prob)
     i1 = collect(tolled(prob))
-    v = base_values(prob)
+    c = base_costs(prob)
 
-    sense = follower_sense(prob)
     M = toll_bounds(prob)
 
     @variable(model, t[i=i1] ≥ 0, upper_bound=M[i])
@@ -17,13 +16,7 @@ function base_model(prob::PricingProblem; silent=false, threads=nothing)
     @objective(model, Max, sum(tx))
 
     # Follower objective
-    if sense == MIN_SENSE
-        @constraint(model, f == v' * x + sum(tx))
-    elseif sense == MAX_SENSE
-        @constraint(model, f == v' * x - sum(tx))
-    else
-        throw(ErrorException("Invalid follower sense: $sense"))
-    end
+    @constraint(model, f == c' * x + sum(tx))
 
     # Linearization
     @constraint(model, tx .≤ M[i1] .* x[i1])

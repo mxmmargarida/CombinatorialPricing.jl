@@ -9,6 +9,8 @@ end
 num_items(prob::MaxStableSetPricing) = prob.vertices
 tolled(prob::MaxStableSetPricing) = prob.tolled
 toll_free(prob::MaxStableSetPricing) = setdiff(BitSet(1:num_items(prob)), tolled(prob))
+base_costs(prob::MaxStableSetPricing) = -prob.base_values
+
 base_values(prob::MaxStableSetPricing) = prob.base_values
 
 # Build graph (the result is cached, do not modify directly on the returned graph)
