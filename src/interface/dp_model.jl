@@ -32,8 +32,8 @@ Transition from `node` to the next layer given `action`.
 function transition end
 
 """
-    is_valid_transition(graph::DPGraph, from::DPNode, to::DPNode, action::DPAction) -> Bool
+    is_valid_transition(graph::DPGraph, source::DPNode, target::DPNode, action::DPAction) -> Bool
 
-Check if `action` is a valid transition between `from` and `to` nodes.
+Check if `action` is a valid transition between `source` and `target` nodes.
 """
 function is_valid_transition end

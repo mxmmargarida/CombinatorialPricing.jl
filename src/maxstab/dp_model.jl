@@ -36,6 +36,17 @@ sink_state(g::MaxStableSetGraph) = MaxStableSetState(BitSet(), num_items(g))
     return (ll, MaxStableSetState(ss, state.num_items))
 end
 
-@memoize Dict function is_valid_transition(dpgraph::MaxStableSetGraph, from::MaxStableSetNode, to::MaxStableSetNode, action::DPAction)
+@memoize Dict function is_valid_transition(dpgraph::MaxStableSetGraph, source::MaxStableSetNode, target::MaxStableSetNode, action::DPAction)
+    s, t = source[2].available, target[2].available
+    g = graph(dpgraph.prob)
+    # We assume that action is already a stable set
+    # All nodes in action must be available in source
+    (action ⊆ s) || return false
+    # All nodes in target must be available in source
+    (t ⊆ s) || return false
+    # No node in target is unavailable from action
+    for i in action
+        any(∈(t), neighbors(g, i)) && return false
+    end
     return true
 end
