@@ -1,6 +1,6 @@
 module CombinatorialPricing
 
-using Printf
+using Printf, UnicodeGraphics
 using DataStructures, SparseArrays
 using JSON, Unmarshal, Memoization
 using JuMP, Gurobi
@@ -18,6 +18,7 @@ include("interface/dp_model.jl")
 
 include("misc/lazyenv.jl")
 include("misc/blank_model.jl")
+include("misc/print_utils.jl")
 
 include("components/matrices.jl")
 include("components/utils.jl")

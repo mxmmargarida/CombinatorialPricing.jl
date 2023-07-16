@@ -2,7 +2,7 @@
 
 julia_version = "1.8.3"
 manifest_format = "2.0"
-project_hash = "3a3549f588ff98cd3af9a095aea52aafd04b498a"
+project_hash = "7b0068d6e3c1f1ddd74edeaae6ebbe78627b6208"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -682,6 +682,11 @@ version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
+
+[[deps.UnicodeGraphics]]
+git-tree-sha1 = "53c9f486b447ad390a87559a440ca5fe4c830643"
+uuid = "ebadf6b4-db70-5817-83da-4a19ad584e34"
+version = "0.2.1"
 
 [[deps.Unmarshal]]
 deps = ["JSON", "LazyJSON", "Missings", "Nullables", "Requires"]

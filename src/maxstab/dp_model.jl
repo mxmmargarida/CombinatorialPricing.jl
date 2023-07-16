@@ -1,9 +1,10 @@
 # State
 struct MaxStableSetState <: DPState{MaxStableSetPricing}
     available::BitSet
+    num_items::Int
 end
 
-Base.show(io::IO, s::MaxStableSetState) = print(io, collect(s.available))
+Base.show(io::IO, s::MaxStableSetState) = print(io, bitset_braille(s.available, s.num_items))
 Base.hash(s::MaxStableSetState, h::UInt) = hash(s.available, h)
 Base.:(==)(s::MaxStableSetState, t::MaxStableSetState) = s.available == t.available
 
@@ -14,8 +15,8 @@ const MaxStableSetGraph = graph_type(MaxStableSetPricing)
 const MaxStableSetNode = node_type(MaxStableSetPricing)
 const MaxStableSetArc = arc_type(MaxStableSetPricing)
 
-source_state(g::MaxStableSetGraph) = MaxStableSetState(union_sets(g.partition))
-sink_state(g::MaxStableSetGraph) = MaxStableSetState(BitSet())
+source_state(g::MaxStableSetGraph) = MaxStableSetState(union_sets(g.partition), num_items(g))
+sink_state(g::MaxStableSetGraph) = MaxStableSetState(BitSet(), num_items(g))
 
 @memoize Dict function transition(dpgraph::MaxStableSetGraph, node::MaxStableSetNode, action::DPAction)
     l, state = node
@@ -32,7 +33,7 @@ sink_state(g::MaxStableSetGraph) = MaxStableSetState(BitSet())
         setdiff!(ss, neighbors(g, i))
     end
 
-    return (ll, MaxStableSetState(ss))
+    return (ll, MaxStableSetState(ss, state.num_items))
 end
 
 @memoize Dict function is_valid_transition(dpgraph::MaxStableSetGraph, from::MaxStableSetNode, to::MaxStableSetNode, action::DPAction)

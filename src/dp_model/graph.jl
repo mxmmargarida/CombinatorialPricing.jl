@@ -22,4 +22,6 @@ partition(g::DPGraph, l) = g.partition[l]
 layer(g::DPGraph, l) = l == 0 ? [source_state(g)] : g.layers[l]
 Base.getindex(g::DPGraph, l) = layer(g, l)
 
+num_items(g::DPGraph) = num_items(g.prob)
+
 Base.show(io::IO, g::DPGraph{P,S}) where {P,S} = print(io, "DPGraph{$P} with $(nl(g)) layers, $(nv(g)) nodes, and $(ne(g)) arcs")
