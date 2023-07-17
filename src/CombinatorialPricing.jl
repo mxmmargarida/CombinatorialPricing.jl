@@ -39,18 +39,25 @@ include("models/cutting_plane.jl")
 include("models/value_function.jl")
 include("models/dpgraph_model.jl")
 
+include("samplers/bilevel_feasible.jl")
+
+include("knapsack/problem.jl")
+include("knapsack/probgen.jl")
+include("knapsack/model.jl")
+include("knapsack/dp_model.jl")
+include("knapsack/maximal_sampler.jl")
+
 include("maxstab/problem.jl")
 include("maxstab/probgen.jl")
 include("maxstab/model.jl")
 include("maxstab/dp_model.jl")
-include("maxstab/samplers/maximal.jl")
-include("maxstab/samplers/bilevel_feasible.jl")
+include("maxstab/maximal_sampler.jl")
 include("maxstab/analysis.jl")
 
 export PricingProblem, num_items, tolled, toll_free, base_costs, generate
 export toll_bounds, add_primal!
 export DPState, source_state, sink_state, transition, is_valid_transition
-export AbstractSampler
+export AbstractSampler, problem
 
 export Partition
 export AbstractPartitioning, DefaultPartitioning, RandomPartitioning, TolledFirstPartitioning
@@ -67,9 +74,15 @@ export follower_model, set_toll!
 export value_function_model, add_value_function_constraint!
 export dpgraph_model
 
+export BilevelFeasibleSampler
+
+export KnapsackPricing
+export base_values, weights, capacity, density
+export MaximalKnapsackSampler
+
 export MaxStableSetPricing
 export graph, base_values
-export MaximalStableSetSampler, BilevelFeasibleStableSetSampler
+export MaximalStableSetSampler
 export plot_solution
 
 # Exports from JuMP
