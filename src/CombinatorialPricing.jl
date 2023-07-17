@@ -30,6 +30,7 @@ include("dp_model/type_utils.jl")
 include("dp_model/unstructured_path.jl")
 include("dp_model/structured_path.jl")
 include("dp_model/populate.jl")
+include("dp_model/stats.jl")
 
 include("models/base_model.jl")
 include("models/follower_model.jl")
@@ -44,6 +45,7 @@ include("maxstab/model.jl")
 include("maxstab/dp_model.jl")
 include("maxstab/samplers/maximal.jl")
 include("maxstab/samplers/bilevel_feasible.jl")
+include("maxstab/analysis.jl")
 
 export PricingProblem, num_items, tolled, toll_free, base_costs, generate
 export toll_bounds, add_primal!
@@ -54,6 +56,7 @@ export Partition
 export AbstractPartitioning, DefaultPartitioning, RandomPartitioning, TolledFirstPartitioning
 export DPNode, DPAction, DPArc, action
 export DPGraph, source_node, sink_node, nl, layer, partition
+export node_stats, count_paths
 
 export unstructured_path
 export structured_path
@@ -67,8 +70,12 @@ export dpgraph_model
 export MaxStableSetPricing
 export graph, base_values
 export MaximalStableSetSampler, BilevelFeasibleStableSetSampler
+export plot_solution
 
 # Exports from JuMP
 export optimize!, value, objective_value
+
+# Exports from Graphs
+export nv, ne, vertices, edges
 
 end # module CombinatorialPricing
