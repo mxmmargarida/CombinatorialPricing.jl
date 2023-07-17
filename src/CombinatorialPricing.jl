@@ -34,10 +34,12 @@ include("dp_model/stats.jl")
 
 include("models/base_model.jl")
 include("models/follower_model.jl")
+include("models/trivial_solutions.jl")
 include("models/heuristic.jl")
 include("models/cutting_plane.jl")
 include("models/value_function.jl")
 include("models/dpgraph_model.jl")
+include("models/colgen_model.jl")
 
 include("samplers/bilevel_feasible.jl")
 
@@ -71,8 +73,10 @@ export populate_nodes!, populate_arcs!
 
 export base_model
 export follower_model, set_toll!
+export toll_free_solution, null_toll_solution, difference_estimate
 export value_function_model, add_value_function_constraint!
 export dpgraph_model
+export colgen_model
 
 export BilevelFeasibleSampler
 

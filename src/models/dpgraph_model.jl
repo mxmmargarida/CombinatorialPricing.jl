@@ -15,9 +15,6 @@ function add_dpgraph_dual!(model, dpgraph::DPGraph; sdtol=1e-4)
     nodes = collect(vertices(dpgraph))
     @variable(model, y[nodes])
     fix(y[sink_node(dpgraph)], 0)
-
-    # node_label_str = ["y[$n]" for n in 1:length(nodes)]
-    # set_name.(y, node_label_str)
     
     # Constraints are arcs in the DP graph
     for arc in edges(dpgraph)
