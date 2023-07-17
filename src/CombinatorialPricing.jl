@@ -27,15 +27,16 @@ include("dp_model/partition.jl")
 include("dp_model/components.jl")
 include("dp_model/graph.jl")
 include("dp_model/type_utils.jl")
-
-include("components/unstructured_path.jl")
-include("components/structured_path.jl")
-include("components/populate.jl")
+include("dp_model/unstructured_path.jl")
+include("dp_model/structured_path.jl")
+include("dp_model/populate.jl")
 
 include("models/base_model.jl")
 include("models/follower_model.jl")
 include("models/heuristic.jl")
+include("models/cutting_plane.jl")
 include("models/value_function.jl")
+include("models/dpgraph_model.jl")
 
 include("maxstab/problem.jl")
 include("maxstab/probgen.jl")
@@ -61,6 +62,7 @@ export populate_nodes!, populate_arcs!
 export base_model
 export follower_model, set_toll!
 export value_function_model, add_value_function_constraint!
+export dpgraph_model
 
 export MaxStableSetPricing
 export graph, base_values

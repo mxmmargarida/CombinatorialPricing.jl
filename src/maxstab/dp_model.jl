@@ -18,7 +18,7 @@ const MaxStableSetArc = arc_type(MaxStableSetPricing)
 source_state(g::MaxStableSetGraph) = MaxStableSetState(union_sets(g.partition), num_items(g))
 sink_state(g::MaxStableSetGraph) = MaxStableSetState(BitSet(), num_items(g))
 
-@memoize Dict function transition(dpgraph::MaxStableSetGraph, node::MaxStableSetNode, action::DPAction)
+function transition(dpgraph::MaxStableSetGraph, node::MaxStableSetNode, action::DPAction)
     l, state = node
     ll = l + 1
     s = state.available
@@ -36,15 +36,15 @@ sink_state(g::MaxStableSetGraph) = MaxStableSetState(BitSet(), num_items(g))
     return (ll, MaxStableSetState(ss, state.num_items))
 end
 
-@memoize Dict function is_valid_transition(dpgraph::MaxStableSetGraph, source::MaxStableSetNode, target::MaxStableSetNode, action::DPAction)
+function is_valid_transition(dpgraph::MaxStableSetGraph, source::MaxStableSetNode, target::MaxStableSetNode, action::DPAction)
     s, t = source[2].available, target[2].available
-    g = graph(dpgraph.prob)
     # We assume that action is already a stable set
     # All nodes in action must be available in source
     (action ⊆ s) || return false
     # All nodes in target must be available in source
     (t ⊆ s) || return false
     # No node in target is unavailable from action
+    g = graph(dpgraph.prob)
     for i in action
         any(∈(t), neighbors(g, i)) && return false
     end
