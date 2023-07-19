@@ -1,12 +1,8 @@
-abstract type AbstractSampler end
+abstract type SolutionSampler end
 
 """
-    problem(sampler::AbstractSampler) -> PricingProblem
+    problem(sampler::SolutionSampler) -> PricingProblem
 
 Return the problem corresponding to the `sampler`.
 """
 function problem end
-
-function Base.rand(sampler::AbstractSampler, count::Int)
-    return [rand(sampler) for _ in 1:count]
-end

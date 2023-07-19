@@ -61,7 +61,7 @@ include("maxstab/analysis.jl")
 export PricingProblem, num_items, tolled, toll_free, base_costs, generate
 export toll_bounds, add_primal!
 export DPState, source_state, sink_state, transition, is_valid_transition
-export AbstractSampler, problem
+export SolutionSampler, problem
 
 export Partition
 export AbstractPartitioning, DefaultPartitioning, RandomPartitioning, TolledFirstPartitioning
