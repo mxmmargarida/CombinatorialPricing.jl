@@ -85,6 +85,7 @@ function _realize!(cgstate::ColGenModelState, nodes; apply_unique=true)
         (length(node_to_ind) < num_cols) || break       # Break if node budget has reached
         # Add node to both registry and dpgraph
         node_to_ind[node] = length(node_to_ind) + 1
+        @info "Realize $(node => node_to_ind[node])"
         push!(layers[node[1]], node[2])
         push!(added_nodes, node)
     end

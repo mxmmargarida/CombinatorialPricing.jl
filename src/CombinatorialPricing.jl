@@ -67,7 +67,7 @@ export Partition
 export AbstractPartitioning, DefaultPartitioning, RandomPartitioning, TolledFirstPartitioning
 export DPNode, DPAction, DPArc, action
 export DPGraph, source_node, sink_node, nl, layer, partition
-export node_stats, count_paths
+export node_stats, count_paths, arc_distribution
 export unique_paths, unique_arcs, count_unique_paths
 
 export unstructured_path
