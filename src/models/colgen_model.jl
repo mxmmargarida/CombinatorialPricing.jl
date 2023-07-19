@@ -1,8 +1,9 @@
-function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4)
+function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, min_connections=2)
+    # Note: dpgraph must be empty
     model = base_model(dpgraph.prob; silent, threads)
-    add_colgen_dual!(model, dpgraph, num_cols; sdtol)
+    add_colgen_dual!(model, dpgraph, num_cols; threads, sdtol)
     heuristic && add_heuristic_provider!(model)
-    add_colgen_callback!(model; threads)
+    add_colgen_callback!(model; threads, min_connections)
     return model
 end
 
@@ -31,43 +32,35 @@ function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; threads=nothing, sd
     @constraint(model, strongdual, primal_obj ≤ dual_obj + sdtol)
 end
 
-function add_colgen_callback!(model; threads=nothing)
+function add_colgen_callback!(model; threads=nothing, min_connections=2)
     dpgraph = model[:dpgraph]
     y = model[:y]
-    num_cols = length(y)
     ct = make_ct(model[:t], model[:prob])
 
-    node_to_ind = model[:cg_node_to_ind] = Dict([
-        source_node(dpgraph) => 1,
-        sink_node(dpgraph) => 2
-    ])
-
-    # Automatically create new node when it does not exist
-    function get_node_var(node)
-        if !haskey(node_to_ind, node)
-            node_to_ind[node] = length(node_to_ind) + 1
-            push!(dpgraph.layers[node[1]], node[2])
-        end
-        return y[node_to_ind[node]]
-    end
+    model[:cgstate] = cgstate = ColGenModelState(length(y), min_connections, dpgraph)
 
     add_cutting_plane_callback!(model; threads) do cb_data, x̂
         x_set = convert_x_to_set(x̂)
 
-        # Check if there are enough nodes to fit the path
-        path = unstructured_path(dpgraph, x_set)
-        unstruct_nodes = Set(vcat(src.(path), dst.(path)))
-        num_new_nodes = count(n -> !haskey(node_to_ind, n), unstruct_nodes)
-
-        # If not fit, find the structured path instead
-        if num_new_nodes > num_cols - length(node_to_ind)
+        local path
+        if _is_full(cgstate)
+            # If no nodes can be added, find the structured path
             path = structured_path(dpgraph, x_set)
+        else
+            # If new nodes can be added, find the unstructured path and add it to the proto-graph
+            upath = unstructured_path(dpgraph, x_set)
+            _add_proto!(cgstate, upath)
+            # Add new nodes if necessary
+            nodes = _get_new_nodes(cgstate, upath)
+            _realize!(cgstate, nodes)
+            # Refit the path to the new graph
+            path = _refit(cgstate, upath)
         end
 
         # Add all arcs along the path
         for a in path
             # We need to re-add the constraint even if it exists because there's no guarantee that it is included
-            con = @build_constraint(get_node_var(src(a)) - get_node_var(dst(a)) ≤ sum(ct[i] for i in action(a); init=0.))
+            con = @build_constraint(y[cgstate[src(a)]] - y[cgstate[dst(a)]] ≤ sum(ct[i] for i in action(a); init=0.))
             MOI.submit(model, MOI.LazyConstraint(cb_data), con)
             (a in dpgraph.arcs) || push!(dpgraph.arcs, a)
         end

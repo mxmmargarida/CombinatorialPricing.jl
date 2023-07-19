@@ -2,7 +2,7 @@ module CombinatorialPricing
 
 using Printf, UnicodeGraphics
 using DataStructures, SparseArrays
-using JSON, Unmarshal, Memoization
+using JSON, Unmarshal, UnPack, Memoization
 using JuMP, Gurobi
 using Graphs
 using Random, Distributions
@@ -31,6 +31,7 @@ include("dp_model/unstructured_path.jl")
 include("dp_model/structured_path.jl")
 include("dp_model/populate.jl")
 include("dp_model/stats.jl")
+include("dp_model/unique.jl")
 
 include("models/base_model.jl")
 include("models/follower_model.jl")
@@ -39,6 +40,7 @@ include("models/heuristic.jl")
 include("models/cutting_plane.jl")
 include("models/value_function.jl")
 include("models/dpgraph_model.jl")
+include("models/colgen_state.jl")
 include("models/colgen_model.jl")
 
 include("samplers/bilevel_feasible.jl")
@@ -66,6 +68,7 @@ export AbstractPartitioning, DefaultPartitioning, RandomPartitioning, TolledFirs
 export DPNode, DPAction, DPArc, action
 export DPGraph, source_node, sink_node, nl, layer, partition
 export node_stats, count_paths
+export unique_paths, unique_arcs, count_unique_paths
 
 export unstructured_path
 export structured_path
@@ -93,6 +96,6 @@ export plot_solution
 export optimize!, value, objective_value
 
 # Exports from Graphs
-export nv, ne, vertices, edges
+export nv, ne, vertices, edges, src, dst
 
 end # module CombinatorialPricing
