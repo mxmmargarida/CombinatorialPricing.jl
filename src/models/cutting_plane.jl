@@ -4,6 +4,7 @@ function add_cutting_plane_callback!(cutgen::Function, model; threads=nothing)
     model[:callback_time] = 0.
     model[:callback_calls] = 0
 
+    sdtol = model[:sdtol]
     provider = haskey(model, :heur_provider) ? model[:heur_provider] : nothing
 
     function lazy_callback(cb_data)
@@ -18,7 +19,7 @@ function add_cutting_plane_callback!(cutgen::Function, model; threads=nothing)
             model[:callback_calls] += 1
     
             # Add a constraint if the current_obj is not optimal
-            if follower_obj < current_obj * (1 + 1e-6)
+            if follower_obj < current_obj - sdtol
                 cutgen(cb_data, x̂)
                 push!(model[:vf_x], x̂)
             end

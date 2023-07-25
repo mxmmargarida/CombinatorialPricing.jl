@@ -1,12 +1,12 @@
 function dpgraph_model(dpgraph::DPGraph; silent=false, threads=nothing, heuristic=true, sdtol=1e-4)
-    model = base_model(dpgraph.prob; silent, threads)
-    add_dpgraph_dual!(model, dpgraph; sdtol)
+    model = base_model(dpgraph.prob; silent, threads, sdtol)
+    add_dpgraph_dual!(model, dpgraph)
     heuristic && add_heuristic_provider!(model)
     add_dpgraph_callback!(model; threads)
     return model
 end
 
-function add_dpgraph_dual!(model, dpgraph::DPGraph; sdtol=1e-4)
+function add_dpgraph_dual!(model, dpgraph::DPGraph)
     prob = model[:prob]
     model[:dpgraph] = dpgraph
     ct = make_ct(model[:t], prob)
@@ -21,11 +21,8 @@ function add_dpgraph_dual!(model, dpgraph::DPGraph; sdtol=1e-4)
         @constraint(model, y[src(arc)] - y[dst(arc)] ≤ sum(ct[i] for i in action(arc); init=0.))
     end
 
-    # Primal objective = min (c + t)x
     # Dual objective = max y[source] (- y[sink])
-    primal_obj = model[:f]
-    dual_obj = y[source_node(dpgraph)]
-    @constraint(model, strongdual, primal_obj ≤ dual_obj + sdtol)
+    @constraint(model, dualobj, model[:g] == y[source_node(dpgraph)])
 end
 
 function add_dpgraph_callback!(model; threads=nothing)

@@ -1,13 +1,13 @@
 function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, min_connections=2)
     # Note: dpgraph must be empty
-    model = base_model(dpgraph.prob; silent, threads)
-    add_colgen_dual!(model, dpgraph, num_cols; threads, sdtol)
+    model = base_model(dpgraph.prob; silent, threads, sdtol)
+    add_colgen_dual!(model, dpgraph, num_cols; threads)
     heuristic && add_heuristic_provider!(model)
     add_colgen_callback!(model; threads, min_connections)
     return model
 end
 
-function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; threads=nothing, sdtol=1e-4)
+function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; threads=nothing)
     prob = model[:prob]
     model[:dpgraph] = dpgraph
     n = num_items(prob)
@@ -25,11 +25,8 @@ function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; threads=nothing, sd
     nulltoll = null_toll_solution(prob; threads)
     @constraint(model, y[1] ≤ ct' * convert_set_to_x(nulltoll, n))
 
-    # Primal objective = min (c + t)x
     # Dual objective = max y[source] (- y[sink])
-    primal_obj = model[:f]
-    dual_obj = y[1]
-    @constraint(model, strongdual, primal_obj ≤ dual_obj + sdtol)
+    @constraint(model, dualobj, model[:g] == y[1])
 end
 
 function add_colgen_callback!(model; threads=nothing, min_connections=2)
