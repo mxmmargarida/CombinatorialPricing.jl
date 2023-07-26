@@ -35,3 +35,9 @@ function unique_arcs(dpgraph::DPGraph)
 end
 
 count_unique_paths(dpgraph::DPGraph) = length(unique_paths(dpgraph))
+
+function unique_graph(dpgraph::DPGraph)
+    @unpack prob, partition, layers = dpgraph
+    arcs = unique_arcs(dpgraph)
+    return DPGraph(prob, partition, layers, arcs)
+end

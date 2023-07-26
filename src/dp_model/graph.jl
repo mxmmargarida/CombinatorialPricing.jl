@@ -6,7 +6,12 @@ struct DPGraph{P<:PricingProblem, S<:DPState}
 end
 
 DPGraph(prob::P, partition, layers) where P<:PricingProblem = graph_type(P)(prob, partition, layers, [])
-DPGraph(prob::P, partition) where P<:PricingProblem = DPGraph(prob, partition, [state_type(P)[] for _ in 1:length(partition)])
+
+function DPGraph(prob::P, partition) where P<:PricingProblem
+    g = DPGraph(prob, partition, [state_type(P)[] for _ in 1:length(partition)])
+    push!(g.layers[end], sink_state(g))
+    return g
+end
 
 source_node(g::DPGraph) = (0, source_state(g))
 sink_node(g::DPGraph) = (nl(g), sink_state(g))

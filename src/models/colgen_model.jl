@@ -1,9 +1,11 @@
-function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, min_connections=2)
+function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, reset_follower=false,
+    filter = (in, out) -> true)
+
     # Note: dpgraph must be empty
     model = base_model(dpgraph.prob; silent, threads, sdtol)
     add_colgen_dual!(model, dpgraph, num_cols; threads)
     heuristic && add_heuristic_provider!(model)
-    add_colgen_callback!(model; threads, min_connections)
+    add_colgen_callback!(model; threads, reset_follower, filter)
     return model
 end
 
@@ -15,44 +17,33 @@ function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; threads=nothing)
 
     # A pool of nodes, 1 is always the source, 2 is the sink
     @variable(model, y[1:num_cols])
-    push!(dpgraph.layers[end], sink_state(dpgraph))
     fix(y[2], 0)
-
-    # Connections to prevent unboundedness
-    tollfree = toll_free_solution(prob; threads)
-    @constraint(model, y[1] ≤ ct' * convert_set_to_x(tollfree, n))
-
-    nulltoll = null_toll_solution(prob; threads)
-    @constraint(model, y[1] ≤ ct' * convert_set_to_x(nulltoll, n))
 
     # Dual objective = max y[source] (- y[sink])
     @constraint(model, dualobj, model[:g] == y[1])
 end
 
-function add_colgen_callback!(model; threads=nothing, min_connections=2)
+function add_colgen_callback!(model; threads=nothing, reset_follower=false, filter = (in, out) -> true)
     dpgraph = model[:dpgraph]
     y = model[:y]
     ct = make_ct(model[:t], model[:prob])
 
-    model[:cgstate] = cgstate = ColGenModelState(length(y), min_connections, dpgraph)
+    model[:cgstate] = cgstate = ColGenModelState(length(y), filter, dpgraph)
 
-    add_cutting_plane_callback!(model; threads) do cb_data, x̂
+    add_cutting_plane_callback!(model; threads, reset_follower) do cb_data, x̂
         x_set = convert_x_to_set(x̂)
 
-        local path
-        if _is_full(cgstate)
-            # If no nodes can be added, find the structured path
-            path = structured_path(dpgraph, x_set)
-        else
+        if !_is_full(cgstate)
             # If new nodes can be added, find the unstructured path and add it to the proto-graph
             upath = unstructured_path(dpgraph, x_set)
             _add_proto!(cgstate, upath)
             # Add new nodes if necessary
             nodes = _get_new_nodes(cgstate, upath)
             _realize!(cgstate, nodes)
-            # Refit the path to the new graph
-            path = _refit(cgstate, upath)
         end
+
+        # Fit the solution to the graph
+        path = structured_path(dpgraph, x_set)
 
         # Add all arcs along the path
         for a in path

@@ -1,18 +1,18 @@
 struct ColGenModelState
     num_cols::Int
-    min_connections::Int
+    filter::Function
     dpgraph::DPGraph
     node_to_ind::Dict{DPNode,Int}
     proto_ins::MultiDict{DPNode, DPArc}
     proto_outs::MultiDict{DPNode, DPArc}
 end
 
-function ColGenModelState(num_cols, min_connections, dpgraph)
+function ColGenModelState(num_cols, filter, dpgraph)
     node_to_ind = Dict(
         source_node(dpgraph) => 1,
         sink_node(dpgraph) => 2
     )
-    return ColGenModelState(num_cols, min_connections, dpgraph, node_to_ind,
+    return ColGenModelState(num_cols, filter, dpgraph, node_to_ind,
         MultiDict{DPNode, DPArc}(), MultiDict{DPNode, DPArc}())
 end
 
@@ -35,17 +35,16 @@ end
 
 # Get the list of new nodes along a path that are not added to dpgraph
 function _get_new_nodes(cgstate::ColGenModelState, path)
-    @unpack min_connections, node_to_ind, proto_ins, proto_outs = cgstate
+    @unpack node_to_ind, proto_ins, proto_outs = cgstate
 
     # Get the list of nodes along the path and filter out source/sink
     nodes = dst.(path)  # Exclude the source
     pop!(nodes)         # Remove the sink
 
-    # Check if the nodes have enough connections
+    # Return the nodes that pass the filter
     return filter(nodes) do node
         haskey(node_to_ind, node) && return false       # Must not be in dpgraph
-        num_connections = length(proto_ins[node]) + length(proto_outs[node])
-        return num_connections >= min_connections       # Must have at least min_connections
+        return cgstate.filter(length(proto_ins[node]), length(proto_outs[node]))
     end
 end
 
@@ -85,7 +84,7 @@ function _realize!(cgstate::ColGenModelState, nodes; apply_unique=true)
         (length(node_to_ind) < num_cols) || break       # Break if node budget has reached
         # Add node to both registry and dpgraph
         node_to_ind[node] = length(node_to_ind) + 1
-        @info "Realize $(node => node_to_ind[node])"
+        @debug "Realize $(node => node_to_ind[node])"
         push!(layers[node[1]], node[2])
         push!(added_nodes, node)
     end

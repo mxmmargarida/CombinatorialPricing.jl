@@ -74,7 +74,7 @@ export AbstractPartitioning, DefaultPartitioning, RandomPartitioning, TolledFirs
 export DPNode, DPAction, DPArc, action
 export DPGraph, source_node, sink_node, nl, layer, partition
 export node_stats, count_paths, arc_distribution
-export unique_paths, unique_arcs, count_unique_paths
+export unique_paths, unique_arcs, count_unique_paths, unique_graph
 
 export unstructured_path
 export structured_path

@@ -1,8 +1,8 @@
-function dpgraph_model(dpgraph::DPGraph; silent=false, threads=nothing, heuristic=true, sdtol=1e-4)
+function dpgraph_model(dpgraph::DPGraph; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, reset_follower=false)
     model = base_model(dpgraph.prob; silent, threads, sdtol)
     add_dpgraph_dual!(model, dpgraph)
     heuristic && add_heuristic_provider!(model)
-    add_dpgraph_callback!(model; threads)
+    add_dpgraph_callback!(model; threads, reset_follower)
     return model
 end
 
@@ -25,12 +25,12 @@ function add_dpgraph_dual!(model, dpgraph::DPGraph)
     @constraint(model, dualobj, model[:g] == y[source_node(dpgraph)])
 end
 
-function add_dpgraph_callback!(model; threads=nothing)
+function add_dpgraph_callback!(model; threads=nothing, reset_follower=false)
     dpgraph = model[:dpgraph]
     y = model[:y]
     ct = make_ct(model[:t], model[:prob])
 
-    add_cutting_plane_callback!(model; threads) do cb_data, x̂
+    add_cutting_plane_callback!(model; threads, reset_follower) do cb_data, x̂
         x_set = convert_x_to_set(x̂)
         path = structured_path(dpgraph, x_set)
         for a in path

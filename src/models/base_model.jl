@@ -21,6 +21,13 @@ function base_model(prob::PricingProblem; silent=false, threads=nothing, sdtol=1
     @constraint(model, primalobj, f == c' * x + sum(tx))
     @constraint(model, strongdual, f ≤ g + sdtol)
 
+    # Connections to prevent unboundedness
+    model[:tollfree] = toll_free_solution(prob; threads)
+    model[:nulltoll] = null_toll_solution(prob; threads)
+
+    add_value_function_constraint!(model, model[:tollfree])
+    add_value_function_constraint!(model, model[:nulltoll])
+
     # Linearization
     @constraint(model, tx .≤ M[i1] .* x[i1])
     @constraint(model, t .- tx .≤ M[i1] .* (1 .- x[i1]))
