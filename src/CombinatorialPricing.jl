@@ -58,6 +58,12 @@ include("maxstab/dp_model.jl")
 include("maxstab/maximal_sampler.jl")
 include("maxstab/analysis.jl")
 
+include("mincover/problem.jl")
+include("mincover/probgen.jl")
+include("mincover/model.jl")
+include("mincover/dp_model.jl")
+include("mincover/minimal_sampler.jl")
+
 export PricingProblem, num_items, tolled, toll_free, base_costs, generate
 export toll_bounds, add_primal!
 export DPState, source_state, sink_state, transition, is_valid_transition
@@ -76,7 +82,7 @@ export populate_nodes!, populate_arcs!
 
 export base_model
 export follower_model, set_toll!
-export toll_free_solution, null_toll_solution, difference_estimate
+export toll_free_solution, null_toll_solution, toll_free_cost, null_toll_cost, difference_estimate
 export value_function_model, add_value_function_constraint!
 export dpgraph_model
 export colgen_model
@@ -91,6 +97,10 @@ export MaxStableSetPricing
 export graph, base_values
 export MaximalStableSetSampler
 export plot_solution
+
+export MinSetCoverPricing
+export num_elements, restrict
+export MinimalSetCoverSampler
 
 # Exports from JuMP
 export optimize!, value, objective_value

@@ -6,3 +6,13 @@ function incidence_matrix(g::SimpleGraph)
     end
     return mat
 end
+
+function incidence_matrix(sets::Vector{BitSet}, num_elements::Int)
+    mat = spzeros(Int, num_elements, length(sets))
+    for (j, s) in enumerate(sets)
+        for i in s
+            mat[i, j] = 1
+        end
+    end
+    return mat
+end
