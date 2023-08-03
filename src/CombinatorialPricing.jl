@@ -5,7 +5,7 @@ using DataStructures, SparseArrays
 using JSON, Unmarshal, UnPack, Memoization
 using JuMP, Gurobi
 using Graphs
-using Random, Distributions
+using Random, Distributions, StatsBase
 using Parameters: @with_kw
 using GraphPlot, Colors
 using DataFrames
