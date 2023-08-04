@@ -1,5 +1,7 @@
-function value_function_model(prob::PricingProblem; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, reset_follower=false)
-    model = base_model(prob; silent, threads, sdtol)
+function value_function_model(prob::PricingProblem; silent=false, threads=nothing, heuristic=true, sdtol=1e-4,
+    reset_follower=false, trivial_cuts=false, trivial_bound=false)
+    
+    model = base_model(prob; silent, threads, sdtol, trivial_cuts, trivial_bound)
     heuristic && add_heuristic_provider!(model)
     add_value_function_callback!(model; threads, reset_follower)
     return model

@@ -1,5 +1,7 @@
-function dpgraph_model(dpgraph::DPGraph; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, reset_follower=false)
-    model = base_model(dpgraph.prob; silent, threads, sdtol)
+function dpgraph_model(dpgraph::DPGraph; silent=false, threads=nothing, heuristic=true, sdtol=1e-4,
+    reset_follower=false, trivial_cuts=false, trivial_bound=false)
+
+    model = base_model(dpgraph.prob; silent, threads, sdtol, trivial_cuts, trivial_bound)
     add_dpgraph_dual!(model, dpgraph)
     heuristic && add_heuristic_provider!(model)
     add_dpgraph_callback!(model; threads, reset_follower)

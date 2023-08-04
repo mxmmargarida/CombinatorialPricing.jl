@@ -1,8 +1,8 @@
-function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4, reset_follower=false,
-    filter = (in, out) -> true)
+function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing, heuristic=true, sdtol=1e-4,
+    reset_follower=false, trivial_cuts=false, trivial_bound=false, filter = (in, out) -> true)
 
     # Note: dpgraph must be empty
-    model = base_model(dpgraph.prob; silent, threads, sdtol)
+    model = base_model(dpgraph.prob; silent, threads, sdtol, trivial_cuts, trivial_bound)
     add_colgen_dual!(model, dpgraph, num_cols; threads)
     heuristic && add_heuristic_provider!(model)
     add_colgen_callback!(model; threads, reset_follower, filter)

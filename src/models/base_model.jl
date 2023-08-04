@@ -1,4 +1,6 @@
-function base_model(prob::PricingProblem; silent=false, threads=nothing, sdtol=1e-4)
+function base_model(prob::PricingProblem; silent=false, threads=nothing, sdtol=1e-4,
+    trivial_cuts=false, trivial_bound=false)
+
     model = blank_model(; silent, threads)
     model[:prob] = prob
     model[:sdtol] = sdtol
@@ -22,11 +24,22 @@ function base_model(prob::PricingProblem; silent=false, threads=nothing, sdtol=1
     @constraint(model, strongdual, f ≤ g + sdtol)
 
     # Connections to prevent unboundedness
-    model[:tollfree] = toll_free_solution(prob; threads)
-    model[:nulltoll] = null_toll_solution(prob; threads)
+    if trivial_cuts || trivial_bound
+        model[:tollfree] = toll_free_solution(prob; threads)
+        model[:nulltoll] = null_toll_solution(prob; threads)
+    end
 
-    add_value_function_constraint!(model, model[:tollfree])
-    add_value_function_constraint!(model, model[:nulltoll])
+    if trivial_cuts
+        add_value_function_constraint!(model, model[:tollfree])
+        add_value_function_constraint!(model, model[:nulltoll])
+    end
+
+    if trivial_bound
+        tollfree_cost = sum(c[collect(model[:tollfree])]; init=0.)
+        nulltoll_cost = sum(c[collect(model[:nulltoll])]; init=0.)
+        diff_est = tollfree_cost - nulltoll_cost
+        @constraint(model, sum(tx) ≤ diff_est)
+    end
 
     # Linearization
     @constraint(model, tx .≤ M[i1] .* x[i1])
