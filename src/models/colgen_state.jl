@@ -8,12 +8,18 @@ struct ColGenModelState
 end
 
 function ColGenModelState(num_cols, filter, dpgraph)
-    node_to_ind = Dict(
-        source_node(dpgraph) => 1,
-        sink_node(dpgraph) => 2
-    )
-    return ColGenModelState(num_cols, filter, dpgraph, node_to_ind,
-        MultiDict{DPNode, DPArc}(), MultiDict{DPNode, DPArc}())
+    nodes = collect(vertices(dpgraph))
+    node_to_ind = Dict(reverse.(enumerate(nodes)))
+
+    proto_ins = MultiDict{DPNode, DPArc}()
+    proto_outs = MultiDict{DPNode, DPArc}()
+    for arc in edges(dpgraph)
+        s, d = src(arc), dst(arc)
+        push!(proto_outs, s => arc)
+        push!(proto_ins, d => arc)
+    end
+
+    return ColGenModelState(num_cols + length(nodes), filter, dpgraph, node_to_ind, proto_ins, proto_outs)
 end
 
 # Check if the node budget has reached

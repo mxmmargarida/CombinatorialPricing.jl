@@ -3,32 +3,31 @@ function colgen_model(dpgraph::DPGraph, num_cols; silent=false, threads=nothing,
 
     # Note: dpgraph must be empty
     model = base_model(dpgraph.prob; silent, threads, sdtol, trivial_cuts, trivial_bound)
-    add_colgen_dual!(model, dpgraph, num_cols; threads)
+    add_dpgraph_dual!(model, dpgraph)
+    add_colgen_dual!(model, dpgraph, num_cols; filter)
     heuristic && add_heuristic_provider!(model)
-    add_colgen_callback!(model; threads, reset_follower, filter)
+    add_colgen_callback!(model; threads, reset_follower)
     return model
 end
 
-function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; threads=nothing)
-    prob = model[:prob]
+function add_colgen_dual!(model, dpgraph::DPGraph, num_cols; filter = (in, out) -> true)
     model[:dpgraph] = dpgraph
-    n = num_items(prob)
-    ct = make_ct(model[:t], prob)
+    model[:cgstate] = ColGenModelState(num_cols, filter, dpgraph)
 
-    # A pool of nodes, 1 is always the source, 2 is the sink
-    @variable(model, y[1:num_cols])
-    fix(y[2], 0)
+    # A pool of nodes
+    @variable(model, zz[1:num_cols])
 
-    # Dual objective = max y[source] (- y[sink])
-    @constraint(model, dualobj, model[:g] == y[1])
+    # Map existing and potential nodes to a single array
+    z = model[:z] = VariableRef[]
+    append!(z, model[:y].data)
+    append!(z, zz)
 end
 
-function add_colgen_callback!(model; threads=nothing, reset_follower=false, filter = (in, out) -> true)
+function add_colgen_callback!(model; threads=nothing, reset_follower=false)
     dpgraph = model[:dpgraph]
-    y = model[:y]
+    cgstate = model[:cgstate]
+    z = model[:z]
     ct = make_ct(model[:t], model[:prob])
-
-    model[:cgstate] = cgstate = ColGenModelState(length(y), filter, dpgraph)
 
     add_cutting_plane_callback!(model; threads, reset_follower) do cb_data, x̂
         x_set = convert_x_to_set(x̂)
@@ -48,7 +47,7 @@ function add_colgen_callback!(model; threads=nothing, reset_follower=false, filt
         # Add all arcs along the path
         for a in path
             # We need to re-add the constraint even if it exists because there's no guarantee that it is included
-            con = @build_constraint(y[cgstate[src(a)]] - y[cgstate[dst(a)]] ≤ sum(ct[i] for i in action(a); init=0.))
+            con = @build_constraint(z[cgstate[src(a)]] - z[cgstate[dst(a)]] ≤ sum(ct[i] for i in action(a); init=0.))
             MOI.submit(model, MOI.LazyConstraint(cb_data), con)
             (a in dpgraph.arcs) || push!(dpgraph.arcs, a)
         end
