@@ -1,10 +1,10 @@
 @with_kw struct MinSetCoverPricingGenArgs
-    element_costs_dist = DiscreteUniform(50, 100)
-    set_cost_multiplier_dist = Uniform(0.8, 1.2)
-    sets_elements_ratio::Float64 = 2.0
-    include_probability::Float64 = 0.1
-    tolled_proportion::Float64 = 0.5
-    tolled_costs_multiplier::Float64 = 1.5
+    element_costs_dist = DiscreteUniform(50, 85)
+    set_cost_multiplier_dist = Uniform(0.9, 1.1)
+    sets_elements_ratio::Float64 = 1.23
+    include_probability::Float64 = 0.23
+    tolled_proportion::Float64 = 0.28
+    tolled_costs_multiplier::Float64 = 2.3
 end
 
 # Interface
