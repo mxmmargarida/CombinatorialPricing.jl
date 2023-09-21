@@ -22,6 +22,7 @@ include("misc/blank_model.jl")
 include("misc/print_utils.jl")
 include("misc/matrices.jl")
 include("misc/utils.jl")
+include("misc/random_pair.jl")
 
 include("dp_model/partition.jl")
 include("dp_model/components.jl")
@@ -32,6 +33,7 @@ include("dp_model/structured_path.jl")
 include("dp_model/populate.jl")
 include("dp_model/stats.jl")
 include("dp_model/unique.jl")
+include("dp_model/selection_diagram.jl")
 
 include("models/base_model.jl")
 include("models/follower_model.jl")
@@ -42,6 +44,7 @@ include("models/value_function.jl")
 include("models/dpgraph_model.jl")
 include("models/colgen_state.jl")
 include("models/colgen_model.jl")
+include("models/sdgraph_model.jl")
 
 include("samplers/bilevel_feasible.jl")
 
@@ -80,12 +83,16 @@ export unstructured_path
 export structured_path
 export populate_nodes!, populate_arcs!
 
+export SDState, SDArc, SDGraph
+export sdgraph_from_pairs, random_pair
+
 export base_model
 export follower_model, set_toll!
 export toll_free_solution, null_toll_solution, toll_free_cost, null_toll_cost, difference_estimate
 export value_function_model, add_value_function_constraint!
 export dpgraph_model
 export colgen_model
+export sdgraph_model
 
 export BilevelFeasibleSampler
 
