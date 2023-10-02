@@ -41,6 +41,7 @@ function is_valid_transition(dpgraph::MinSetCoverGraph, source::MinSetCoverNode,
     sets = dpgraph.prob.sets
 
     must_cover = setdiff(s, t)
+    isempty(must_cover) && return true
     for i in action
         setdiff!(must_cover, sets[i])
         isempty(must_cover) && return true

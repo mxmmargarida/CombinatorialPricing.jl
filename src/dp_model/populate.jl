@@ -27,10 +27,14 @@ function populate_nodes!(dpgraph::DPGraph, solutions::Vector{BitSet}; num_nodes=
     # Add arcs from given solutions
     if include_arcs
         for sol in solutions
-            path = structured_path(dpgraph, sol)
-            append!(arcs, path)
+            if isnothing(num_nodes)
+                append!(arcs, unstructured_path(dpgraph, sol))
+            else
+                append!(arcs, structured_path(dpgraph, sol))
+            end
         end
     end
+    unique!(arcs)
 
     return dpgraph
 end
