@@ -1,10 +1,10 @@
 @with_kw struct KnapsackPricingGenArgs
     values_dist = DiscreteUniform(1, 100)
     weights_dist = DiscreteUniform(1, 100)
-    density_dist = Uniform(0.8, 1.2)
-    capacity_ratio::Float64 = 0.5
-    tolled_proportion::Float64 = 0.5
-    tolled_values_multiplier::Float64 = 1.5
+    density_dist = Uniform(0.75, 1.25)
+    capacity_ratio::Float64 = 0.6
+    tolled_proportion::Float64 = 0.6
+    tolled_values_multiplier::Float64 = 2.0
 end
 
 # Interface
