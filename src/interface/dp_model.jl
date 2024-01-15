@@ -1,10 +1,10 @@
 """
 The state type of the dynamic programming model corresponding to the pricing problem `P`.
 """
-abstract type DPState{P<:PricingProblem} end
+abstract type DPState{P<:AbstractProblem} end
 
 """
-    state_type(::Type{<:PricingProblem})
+    state_type(::Type{<:AbstractProblem})
 
 Return the state type corresponding to the given pricing problem.
 """

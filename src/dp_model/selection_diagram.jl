@@ -1,5 +1,5 @@
 # State
-struct SDState <: DPState{PricingProblem}
+struct SDState <: DPState{AbstractProblem}
     selected::BitSet
 end
 
@@ -10,7 +10,7 @@ Base.:(==)(s::SDState, t::SDState) = s.selected == t.selected
 const SDArc = DPArc{DPState}
 
 # Graph
-struct SDGraph{P<:PricingProblem}
+struct SDGraph{P<:AbstractProblem}
     prob::P
     layers::Vector{Vector{SDState}}  # Not include the source layer (layer 0)
     arcs::Vector{SDArc}
@@ -37,7 +37,7 @@ num_items(g::SDGraph) = num_items(g.prob)
 Base.show(io::IO, g::SDGraph{P}) where {P} = print(io, "SDGraph{$P} with $(nl(g)) layers, $(nv(g)) nodes, and $(ne(g)) arcs")
 
 # Construction
-function sdgraph_from_pairs(prob::PricingProblem, pairs)
+function sdgraph_from_pairs(prob::AbstractProblem, pairs)
     layer1 = SDState.(BitSet.(unique!(collect(Iterators.flatten(pairs)))))
     layer2 = SDState.(BitSet.(unique!(pairs)))
     layer3 = [SDState(BitSet())]

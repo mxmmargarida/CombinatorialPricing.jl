@@ -11,7 +11,7 @@ function add_value_function_callback!(model; threads=nothing, reset_follower=fal
     g = model[:g]
     ct = make_ct(model[:t], model[:prob])
 
-    add_cutting_plane_callback!(model; threads,reset_follower) do cb_data, x̂
+    add_cutting_plane_callback!(model; threads, reset_follower) do cb_data, x̂
         con = @build_constraint(g ≤ ct' * x̂)
         MOI.submit(model, MOI.LazyConstraint(cb_data), con)
     end

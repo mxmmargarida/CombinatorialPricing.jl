@@ -1,11 +1,16 @@
 """
+The supertype of all problems (including interdiction).
+"""
+abstract type AbstractProblem end
+
+"""
 The supertype of all pricing problems.
 """
-abstract type PricingProblem end
+abstract type PricingProblem <: AbstractProblem end
 
 ## Interface
 """
-    num_items(prob::PricingProblem) -> Int
+    num_items(prob::AbstractProblem) -> Int
 
 Get the total number of items selectable by the followers (including tolled and toll-free items).
 

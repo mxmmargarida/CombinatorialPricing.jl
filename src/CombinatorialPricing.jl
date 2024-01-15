@@ -67,7 +67,13 @@ include("mincover/model.jl")
 include("mincover/dp_model.jl")
 include("mincover/minimal_sampler.jl")
 
-export PricingProblem, num_items, tolled, toll_free, base_costs, generate
+include("interdiction/problem.jl")
+include("interdiction/maximal_sampler.jl")
+include("interdiction/base_model.jl")
+include("interdiction/follower_model.jl")
+include("interdiction/value_function.jl")
+
+export AbstractProblem, PricingProblem, num_items, tolled, toll_free, base_costs, generate
 export toll_bounds, add_primal!
 export DPState, source_state, sink_state, transition, is_valid_transition
 export SolutionSampler, problem
@@ -108,6 +114,10 @@ export plot_solution
 export MinSetCoverPricing
 export num_elements, restrict
 export MinimalSetCoverSampler
+
+export KnapsackInterdiction
+export lower_cap, upper_cap, lower_weights, upper_weights, profits, upper_density, lower_density
+export MaximalKnapsackInterdictionSampler
 
 # Exports from JuMP
 export optimize!, value, objective_value

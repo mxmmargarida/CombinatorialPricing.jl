@@ -6,7 +6,6 @@ function add_cutting_plane_callback!(cutgen::Function, model; threads=nothing, r
     model[:subproblem_times] = Float64[]
     model[:callback_calls] = 0
 
-    sdtol = model[:sdtol]
     provider = haskey(model, :heur_provider) ? model[:heur_provider] : nothing
 
     # If enabled, reset the warmstart solution of the subproblem
@@ -31,7 +30,7 @@ function add_cutting_plane_callback!(cutgen::Function, model; threads=nothing, r
             model[:callback_calls] += 1
             model[:subproblem_time] += subproblem_time
             push!(model[:subproblem_times], subproblem_time)
-            not_optimal = follower_obj < current_obj - sdtol
+            not_optimal = follower_obj < current_obj - 1e-4
             
             @debug "Callback $(round.((follower_obj, current_obj), digits=1)) $(not_optimal ? " " : "*") $(round(Int, subproblem_time * 1000)) ms"
     
@@ -50,14 +49,14 @@ function add_cutting_plane_callback!(cutgen::Function, model; threads=nothing, r
 end
 
 function solve_callback_solution(model, cb_data)
-    t, f, follower = model[:t], model[:f], model[:follower]
+    t, g, follower, prob = model[:t], model[:g], model[:follower], model[:prob]
 
     t̂ = callback_value.(cb_data, t)
-    set_toll!(follower, t̂)
+    set_toll!(follower, prob, t̂)
     optimize!(follower)
 
     follower_obj = objective_value(follower)
-    current_obj = callback_value(cb_data, f)
+    current_obj = callback_value(cb_data, g)
 
     x̂ = round.(Int, value.(follower[:x]))
 

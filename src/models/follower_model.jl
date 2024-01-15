@@ -16,8 +16,7 @@ function follower_model(prob::PricingProblem; silent=false, threads=nothing)
     return model
 end
 
-function set_toll!(model::Model, toll)
-    prob = model[:prob]
+function set_toll!(model::Model, prob::PricingProblem, toll)
     x = model[:x]
     c = base_costs(prob)
     t = expand_t(toll, prob)

@@ -1,7 +1,7 @@
 abstract type SolutionSampler end
 
 """
-    problem(sampler::SolutionSampler) -> PricingProblem
+    problem(sampler::SolutionSampler) -> AbstractProblem
 
 Return the problem corresponding to the `sampler`.
 """
