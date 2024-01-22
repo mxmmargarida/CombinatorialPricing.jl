@@ -1,4 +1,4 @@
-const DPNode{S} = Tuple{Int,S} where S<:DPState{<:PricingProblem}
+const DPNode{S} = Tuple{Int,S} where S<:DPState{<:AbstractProblem}
 const DPAction = BitSet
 
 struct DPArc{S<:DPState}

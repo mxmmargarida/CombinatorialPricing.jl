@@ -68,10 +68,10 @@ include("mincover/dp_model.jl")
 include("mincover/minimal_sampler.jl")
 
 include("interdiction/problem.jl")
+include("interdiction/dp_model.jl")
 include("interdiction/maximal_sampler.jl")
 include("interdiction/base_model.jl")
 include("interdiction/follower_model.jl")
-include("interdiction/value_function.jl")
 
 export AbstractProblem, PricingProblem, num_items, tolled, toll_free, base_costs, generate
 export toll_bounds, add_primal!

@@ -1,13 +1,13 @@
-struct DPGraph{P<:PricingProblem, S<:DPState}
+struct DPGraph{P<:AbstractProblem, S<:DPState}
     prob::P
     partition::Partition
     layers::Vector{Vector{S}}  # Not include the source layer (layer 0)
     arcs::Vector{DPArc{S}}
 end
 
-DPGraph(prob::P, partition, layers) where P<:PricingProblem = graph_type(P)(prob, partition, layers, [])
+DPGraph(prob::P, partition, layers) where P<:AbstractProblem = graph_type(P)(prob, partition, layers, [])
 
-function DPGraph(prob::P, partition) where P<:PricingProblem
+function DPGraph(prob::P, partition) where P<:AbstractProblem
     g = DPGraph(prob, partition, [state_type(P)[] for _ in 1:length(partition)])
     push!(g.layers[end], sink_state(g))
     return g

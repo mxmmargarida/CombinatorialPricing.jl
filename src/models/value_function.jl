@@ -1,4 +1,4 @@
-function value_function_model(prob::PricingProblem; silent=false, threads=nothing, heuristic=true, sdtol=1e-4,
+function value_function_model(prob::AbstractProblem; silent=false, threads=nothing, heuristic=true, sdtol=1e-4,
     reset_follower=false, trivial_cuts=false, trivial_bound=false)
     
     model = base_model(prob; silent, threads, sdtol, trivial_cuts, trivial_bound)

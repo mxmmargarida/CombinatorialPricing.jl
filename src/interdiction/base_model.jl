@@ -1,4 +1,4 @@
-function base_model(prob::KnapsackInterdiction; silent=false, threads=nothing)
+function base_model(prob::KnapsackInterdiction; silent=false, threads=nothing, kwargs...)
     model = blank_model(; silent, threads)
     model[:prob] = prob
 

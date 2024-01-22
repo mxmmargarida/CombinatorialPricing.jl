@@ -13,7 +13,7 @@ struct DefaultPartitioning <: AbstractPartitioning
     group_size::Int
 end
 
-function Partition(prob::PricingProblem, partitioning::DefaultPartitioning)
+function Partition(prob::AbstractProblem, partitioning::DefaultPartitioning)
     n = num_items(prob)
     return Partition(BitSet.(Iterators.partition(1:n, partitioning.group_size)))
 end
@@ -26,7 +26,7 @@ end
 
 RandomPartitioning(group_size::Int) = RandomPartitioning(group_size, Random.default_rng())
 
-function Partition(prob::PricingProblem, partitioning::RandomPartitioning)
+function Partition(prob::AbstractProblem, partitioning::RandomPartitioning)
     n = num_items(prob)
     return Partition(BitSet.(Iterators.partition(shuffle(partitioning.rng, 1:n), partitioning.group_size)))
 end
