@@ -1,7 +1,7 @@
 # CombinatorialPricing <!-- omit from toc -->
 
 Julia library for the Combinatorial Pricing Problem (CPP).
-For more details, read our paper \[[1](#readme-ref1)\].
+For more details, read our paper \[[1](https://arxiv.org/abs/2403.12923)\].
 
 ## Table of Contents <!-- omit from toc -->
 
