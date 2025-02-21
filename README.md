@@ -194,4 +194,4 @@ prob = generate(MaxStableSetPricing, numsets;
 ```
 
 ## References
-<!-- <a id="readme-ref1"></a> \[1\] Quang Minh Bui, Bernard Gendron, Margarida Carvalho. A Catalog of Formulations for the Network Pricing Problem. INFORMS Journal on Computing, 34(5):2658–2674, 2022. ([arXiv](https://arxiv.org/abs/2106.03887)) -->
+<a id="readme-ref1"></a> \[1\] Quang Minh Bui, Margarida Carvalho, José Neto. Solving Combinatorial Pricing Problems using Embedded Dynamic Programming Models. ([arXiv](https://arxiv.org/abs/2403.12923))
